@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://h4ffxil73e7l" path="res://scripts/board_view.gd" id="2"]
 [ext_resource type="Script" uid="uid://c08f8iubsgsuq" path="res://scripts/dice_view.gd" id="3"]
 [ext_resource type="Script" uid="uid://qxo88fw5fnjn" path="res://scripts/stat_choice_view.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/battle_view.gd" id="5"]
 
 [node name="Main" type="Node2D" unique_id=1831254880]
 script = ExtResource("1")
@@ -75,3 +76,53 @@ offset_left = 300.0
 offset_right = 440.0
 offset_bottom = 40.0
 text = "마력 +1"
+
+[node name="BattleView" type="Control" parent="UI" unique_id=200000001]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 300.0
+offset_top = 20.0
+offset_right = 760.0
+offset_bottom = 320.0
+script = ExtResource("5")
+
+[node name="Background" type="ColorRect" parent="UI/BattleView" unique_id=200000002]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.1, 0.1, 0.12, 0.92)
+
+[node name="EnemyNameLabel" type="Label" parent="UI/BattleView/Background" unique_id=200000003]
+offset_left = 12.0
+offset_top = 10.0
+offset_right = 300.0
+offset_bottom = 34.0
+text = "적 이름"
+
+[node name="EnemyHpLabel" type="Label" parent="UI/BattleView/Background" unique_id=200000004]
+offset_left = 12.0
+offset_top = 36.0
+offset_right = 300.0
+offset_bottom = 58.0
+text = "HP 0 / 0"
+
+[node name="PlayerStatusLabel" type="Label" parent="UI/BattleView/Background" unique_id=200000005]
+offset_left = 12.0
+offset_top = 60.0
+offset_right = 440.0
+offset_bottom = 82.0
+text = "내 HP 0/0 · 마력 0/0"
+
+[node name="ActionContainer" type="VBoxContainer" parent="UI/BattleView/Background" unique_id=200000006]
+offset_left = 12.0
+offset_top = 90.0
+offset_right = 230.0
+offset_bottom = 290.0
+
+[node name="BattleLogLabel" type="Label" parent="UI/BattleView/Background" unique_id=200000007]
+offset_left = 240.0
+offset_top = 90.0
+offset_right = 448.0
+offset_bottom = 290.0
+autowrap_mode = 3

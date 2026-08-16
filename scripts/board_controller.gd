@@ -14,6 +14,7 @@ var stats: PlayerStats
 @onready var board_view: BoardView = $BoardView
 @onready var dice_view: DiceView = $DiceView
 @onready var stat_choice_view: StatChoiceView = $UI/StatChoiceView
+@onready var battle_view: BattleView = $UI/BattleView
 
 func _ready() -> void:
 	board_data = BoardData.new()
@@ -48,15 +49,22 @@ func take_turn() -> void:
 ## 이동 경로에서 지나친 꼭짓점칸을 처리한다(출발칸이면 스탯 선택 후 보스 전투, 아니면 일반 전투)
 func _resolve_corner(index: int) -> void:
 	var cell_type := board_data.get_cell_type(index)
-	if cell_type == BoardData.CellType.START:
+	var is_boss := cell_type == BoardData.CellType.START
+	if is_boss:
 		_log("출발칸 통과! 올릴 스탯을 선택하세요")
 		var chosen: PlayerStats.StatType = await stat_choice_view.ask()
 		stats.add_stat(chosen, 1)
 		_log("%s +1 (출발 보너스)" % stats.stat_name(chosen))
 		_update_status()
-		_log("%d번 꼭짓점(출발) 통과 → 보스 전투 발생" % index)
-	else:
-		_log("%d번 꼭짓점 통과 → 일반 전투 발생" % index)
+
+	_log("%d번 꼭짓점 통과 → %s 전투 발생" % [index, "보스" if is_boss else "일반"])
+	var enemy := EnemyData.create_boss() if is_boss else EnemyData.create_normal(index)
+	var won: bool = await battle_view.start_battle(stats, enemy)
+	if won:
+		var reward_stat: PlayerStats.StatType = PlayerStats.ALL_STATS.pick_random()
+		stats.add_stat(reward_stat, 1)
+		_log("전투 승리! %s +1" % stats.stat_name(reward_stat))
+	_update_status()
 
 ## 도착한 칸의 종류에 따라 효과를 적용한다
 func _resolve_cell(cell_type: BoardData.CellType, index: int) -> void:
@@ -74,9 +82,9 @@ func _resolve_cell(cell_type: BoardData.CellType, index: int) -> void:
 			stats.add_stat(effect["stat"], effect["amount"])
 			_log("%d번 랜덤칸 도착 → %s (%s %+d)" % [index, effect["name"], stats.stat_name(effect["stat"]), effect["amount"]])
 		BoardData.CellType.SKILL:
-			var skill := GameContent.draw_skill_card()
+			var skill: Dictionary = GameContent.draw_skill_card()
 			stats.skill_cards.append(skill)
-			_log("%d번 스킬칸 도착 → %s 획득" % [index, skill])
+			_log("%d번 스킬칸 도착 → %s 획득" % [index, skill["name"]])
 	_update_status()
 
 func _update_status() -> void:

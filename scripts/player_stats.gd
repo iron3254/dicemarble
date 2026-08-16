@@ -11,7 +11,7 @@ var mana_max: int = 0
 var mana: int = 0
 var hp: int = 20
 var max_hp: int = 20
-var skill_cards: Array[String] = []
+var skill_cards: Array[Dictionary] = []
 
 ## 스탯을 amount만큼 증감시킨다(음수면 디버프, 0 밑으로는 내려가지 않음)
 func add_stat(type: StatType, amount: int) -> void:
