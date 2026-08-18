@@ -12,7 +12,7 @@ var stats: PlayerStats
 @onready var log_label: Label = $UI/LogLabel
 @onready var roll_button: Button = $UI/RollButton
 @onready var board_view: BoardView = $BoardView
-@onready var dice_view: DiceView = $DiceView
+@onready var dice_3d_view: Dice3DView = $UI/Dice3DView
 @onready var stat_choice_view: StatChoiceView = $UI/StatChoiceView
 @onready var battle_view: BattleView = $UI/BattleView
 
@@ -24,11 +24,10 @@ func _ready() -> void:
 	roll_button.pressed.connect(take_turn)
 	_update_status()
 
-## 한 턴 진행: 주사위 애니메이션 → 이동 → 지나친 꼭짓점 처리 → 도착 칸 효과 → 승리 체크
+## 한 턴 진행: 3D 주사위를 굴려 이동 → 지나친 꼭짓점 처리 → 도착 칸 효과 → 승리 체크
 func take_turn() -> void:
 	roll_button.disabled = true
-	var steps := Dice.roll()
-	await dice_view.play_roll(steps)
+	var steps := await dice_3d_view.roll()
 
 	var passed_corners := player.move(steps, board_data)
 	_log("주사위: %d" % steps)

@@ -4,8 +4,13 @@ extends Control
 ## 액션 버튼이 눌리면 선택된 옵션 Dictionary를 담아 발신
 signal action_chosen(option: Dictionary)
 
+@onready var enemy_avatar: ColorRect = $Background/EnemyAvatar
 @onready var enemy_name_label: Label = $Background/EnemyNameLabel
+@onready var enemy_hp_bar: ProgressBar = $Background/EnemyHpBar
 @onready var enemy_hp_label: Label = $Background/EnemyHpLabel
+@onready var player_avatar: ColorRect = $Background/PlayerAvatar
+@onready var player_hp_bar: ProgressBar = $Background/PlayerHpBar
+@onready var player_mana_bar: ProgressBar = $Background/PlayerManaBar
 @onready var player_status_label: Label = $Background/PlayerStatusLabel
 @onready var battle_log_label: Label = $Background/BattleLogLabel
 @onready var action_container: VBoxContainer = $Background/ActionContainer
@@ -72,6 +77,7 @@ func _player_attack_phase() -> void:
 	var roll := Dice.roll()
 	var damage: int = roll + _stats.attack + chosen["power"]
 	_enemy.hp = max(0, _enemy.hp - damage)
+	_flash(enemy_avatar)
 	_log("%s → 주사위 %d + 공격 %d + 위력 %d = %d 피해" % [chosen["label"], roll, _stats.attack, chosen["power"], damage])
 
 ## 기본 방어도 전투당이 아니라 턴당 1회 — 매 턴 다시 사용 가능
@@ -105,6 +111,8 @@ func _enemy_attack_phase() -> void:
 	var mitigation: int = roll + _stats.defense + chosen["power"]
 	var final_damage: int = max(0, enemy_damage - mitigation)
 	_stats.hp = max(0, _stats.hp - final_damage)
+	if final_damage > 0:
+		_flash(player_avatar)
 	_log("%s → 주사위 %d + 방어 %d + 경감 %d = %d 경감 → 최종 피해 %d" % [chosen["label"], roll, _stats.defense, chosen["power"], mitigation, final_damage])
 
 ## 옵션 버튼들을 만들어 보여주고, 플레이어가 하나를 누를 때까지 기다린다
@@ -128,7 +136,20 @@ func _on_action_pressed(option: Dictionary) -> void:
 func _update_status() -> void:
 	enemy_name_label.text = _enemy.enemy_name
 	enemy_hp_label.text = "HP %d / %d" % [_enemy.hp, _enemy.max_hp]
+	enemy_hp_bar.max_value = _enemy.max_hp
+	enemy_hp_bar.value = _enemy.hp
+
 	player_status_label.text = "내 HP %d/%d · 마력 %d/%d" % [_stats.hp, _stats.max_hp, _stats.mana, _stats.mana_max]
+	player_hp_bar.max_value = _stats.max_hp
+	player_hp_bar.value = _stats.hp
+	player_mana_bar.max_value = max(1, _stats.mana_max)
+	player_mana_bar.value = _stats.mana
+
+## 피해를 입은 쪽의 아바타를 짧게 붉게 번쩍여 타격감을 준다
+func _flash(avatar: ColorRect) -> void:
+	avatar.modulate = Color(1.0, 0.4, 0.4)
+	var tween := create_tween()
+	tween.tween_property(avatar, "modulate", Color(1, 1, 1), 0.3)
 
 func _log(message: String) -> void:
 	battle_log_label.text += message + "\n"
