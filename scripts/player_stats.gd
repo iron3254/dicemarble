@@ -6,9 +6,10 @@ const ALL_STATS: Array[StatType] = [StatType.ATTACK, StatType.DEFENSE, StatType.
 
 var attack: int = 0
 var defense: int = 0
-## 마력 최대치(=마력 스탯) : 상한 없이 계속 성장 가능
-var mana_max: int = 0
-var mana: int = 0
+## 마력 최대치(=마력 스탯) : 상한 없이 계속 성장 가능. 시작부터 스킬카드를 써볼 수 있도록 기초값 2
+const BASE_MANA := 2
+var mana_max: int = BASE_MANA
+var mana: int = BASE_MANA
 var hp: int = 20
 var max_hp: int = 20
 var skill_cards: Array[Dictionary] = []

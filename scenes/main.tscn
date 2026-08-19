@@ -20,15 +20,15 @@ corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_enemy_hp_fill"]
-bg_color = Color(0.9, 0.3, 0.3, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mana_fill"]
+bg_color = Color(0.3, 0.6, 1, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mana_fill"]
-bg_color = Color(0.3, 0.6, 1.0, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_enemy_hp_fill"]
+bg_color = Color(0.9, 0.3, 0.3, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
@@ -77,18 +77,17 @@ offset_left = 250.0
 offset_top = 220.0
 offset_right = 800.0
 offset_bottom = 280.0
-horizontal_alignment = 1
+theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
 theme_override_font_sizes/font_size = 40
-theme_override_colors/font_color = Color(1.0, 0.85, 0.2, 1)
-text = ""
+horizontal_alignment = 1
 
 [node name="BigHpLabel" type="Label" parent="UI" unique_id=300000001]
 offset_left = 800.0
 offset_top = 40.0
 offset_right = 1130.0
 offset_bottom = 88.0
-text = "HP 20 / 20"
 theme_override_font_sizes/font_size = 34
+text = "HP 20 / 20"
 
 [node name="BigHpBar" type="ProgressBar" parent="UI" unique_id=300000002]
 offset_left = 800.0
@@ -105,32 +104,32 @@ offset_left = 800.0
 offset_top = 160.0
 offset_right = 1130.0
 offset_bottom = 198.0
-text = "공격 0"
 theme_override_font_sizes/font_size = 30
+text = "공격 0"
 
 [node name="BigDefenseLabel" type="Label" parent="UI" unique_id=300000004]
 offset_left = 800.0
 offset_top = 202.0
 offset_right = 1130.0
 offset_bottom = 240.0
-text = "방어 0"
 theme_override_font_sizes/font_size = 30
+text = "방어 0"
 
 [node name="BigManaLabel" type="Label" parent="UI" unique_id=300000005]
 offset_left = 800.0
 offset_top = 244.0
 offset_right = 1130.0
 offset_bottom = 282.0
-text = "마력 0 / 0"
 theme_override_font_sizes/font_size = 30
+text = "마력 0 / 0"
 
 [node name="BigSkillLabel" type="Label" parent="UI" unique_id=300000006]
 offset_left = 800.0
 offset_top = 292.0
 offset_right = 1130.0
 offset_bottom = 324.0
-text = "스킬카드 0장"
 theme_override_font_sizes/font_size = 22
+text = "스킬카드 0장"
 
 [node name="StatChoiceView" type="Control" parent="UI" unique_id=1403617027]
 layout_mode = 3
@@ -177,17 +176,16 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.1, 0.1, 0.13, 1.0)
+color = Color(0.1, 0.1, 0.13, 1)
 
 [node name="TitleLabel" type="Label" parent="UI/BattleView/Background" unique_id=200000020]
 layout_mode = 0
-offset_left = 0.0
 offset_top = 24.0
 offset_right = 1152.0
 offset_bottom = 60.0
-horizontal_alignment = 1
-text = "전투"
 theme_override_font_sizes/font_size = 28
+text = "전투"
+horizontal_alignment = 1
 
 [node name="PlayerLabel" type="Label" parent="UI/BattleView/Background" unique_id=200000010]
 layout_mode = 0
@@ -195,8 +193,8 @@ offset_left = 80.0
 offset_top = 100.0
 offset_right = 320.0
 offset_bottom = 128.0
-text = "플레이어"
 theme_override_font_sizes/font_size = 20
+text = "플레이어"
 
 [node name="PlayerAvatar" type="ColorRect" parent="UI/BattleView/Background" unique_id=200000011]
 layout_mode = 0
@@ -241,9 +239,9 @@ offset_left = 832.0
 offset_top = 100.0
 offset_right = 1072.0
 offset_bottom = 128.0
-horizontal_alignment = 2
-text = "적 이름"
 theme_override_font_sizes/font_size = 20
+text = "적 이름"
+horizontal_alignment = 2
 
 [node name="EnemyAvatar" type="ColorRect" parent="UI/BattleView/Background" unique_id=200000014]
 layout_mode = 0
@@ -269,8 +267,8 @@ offset_left = 832.0
 offset_top = 356.0
 offset_right = 1072.0
 offset_bottom = 380.0
-horizontal_alignment = 2
 text = "HP 0 / 0"
+horizontal_alignment = 2
 
 [node name="TurnLabel" type="Label" parent="UI/BattleView/Background" unique_id=200000022]
 layout_mode = 0
@@ -278,9 +276,8 @@ offset_left = 380.0
 offset_top = 100.0
 offset_right = 780.0
 offset_bottom = 132.0
-horizontal_alignment = 1
 theme_override_font_sizes/font_size = 24
-text = ""
+horizontal_alignment = 1
 
 [node name="BattleDiceView" type="SubViewportContainer" parent="UI/BattleView/Background" unique_id=200000021]
 layout_mode = 0
@@ -296,19 +293,17 @@ offset_left = 456.0
 offset_top = 286.0
 offset_right = 696.0
 offset_bottom = 330.0
-alignment = 1
 theme_override_constants/separation = 10
+alignment = 1
 
 [node name="DiceRollLabel" type="Label" parent="UI/BattleView/Background/DiceResultRow" unique_id=200000025]
 layout_mode = 2
-text = ""
 theme_override_font_sizes/font_size = 36
 
 [node name="DiceStatLabel" type="Label" parent="UI/BattleView/Background/DiceResultRow" unique_id=200000026]
 layout_mode = 2
-text = ""
+theme_override_colors/font_color = Color(0.3, 1, 0.4, 1)
 theme_override_font_sizes/font_size = 36
-theme_override_colors/font_color = Color(0.3, 1.0, 0.4, 1)
 
 [node name="ActionContainer" type="VBoxContainer" parent="UI/BattleView/Background" unique_id=200000006]
 layout_mode = 0
@@ -317,4 +312,3 @@ offset_top = 420.0
 offset_right = 660.0
 offset_bottom = 620.0
 theme_override_constants/separation = 8
-

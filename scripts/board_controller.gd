@@ -2,6 +2,8 @@ extends Node2D
 
 ## 승리에 필요한 완주 바퀴 수
 @export var win_laps: int = 3
+## 한 바퀴를 완주할 때마다 늘어나는 최대 HP
+@export var lap_max_hp_bonus: int = 10
 
 var board_data: BoardData
 var player: PlayerToken
@@ -53,6 +55,14 @@ func take_turn() -> void:
 	else:
 		roll_button.disabled = false
 
+## 출발선 보스를 잡았을 때: 최대 HP를 늘리고 HP를 전부 회복시킨다
+func _on_boss_defeated() -> void:
+	stats.max_hp += lap_max_hp_bonus
+	stats.hp = stats.max_hp
+	_update_status()
+	_float_popup(big_hp_label.position + Vector2(0.0, -44.0),
+		"최대 HP +%d, 전부 회복!" % lap_max_hp_bonus, Color(0.3, 1.0, 0.4))
+
 ## 이동 경로에서 지나친 꼭짓점칸을 처리한다(출발칸이면 스탯 선택 후 보스 전투, 아니면 일반 전투)
 func _resolve_corner(index: int) -> void:
 	var cell_type := board_data.get_cell_type(index)
@@ -69,6 +79,8 @@ func _resolve_corner(index: int) -> void:
 		var reward_stat: PlayerStats.StatType = PlayerStats.ALL_STATS.pick_random()
 		stats.add_stat(reward_stat, 1)
 		_show_stat_gain(reward_stat, 1)
+		if is_boss:
+			_on_boss_defeated()
 	_update_status()
 
 ## 도착한 칸의 종류에 따라 효과를 적용한다
