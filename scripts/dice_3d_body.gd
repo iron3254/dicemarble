@@ -20,13 +20,23 @@ func roll_physics() -> int:
 	apply_impulse(Vector3(randf_range(-1.0, 1.0), randf_range(2.5, 3.5), randf_range(-1.0, 1.0)))
 	apply_torque_impulse(Vector3(randf_range(-5.0, 5.0), randf_range(-5.0, 5.0), randf_range(-5.0, 5.0)))
 
+	## 바운스 도중 순간적으로 속도가 0 근처로 떨어지는 지점을 "완전히 멈췄다"고 오판하지 않도록,
+	## 일정 시간(0.3초) 동안 연속으로 느려진 상태가 유지되어야 정지로 판정한다
+	const REQUIRED_STILL_TIME := 0.3
+	const MAX_WAIT := 4.0
 	await get_tree().physics_frame
+	var still_time := 0.0
 	var elapsed := 0.0
-	while elapsed < 4.0:
-		if sleeping or (linear_velocity.length() < 0.05 and angular_velocity.length() < 0.05):
-			break
+	while elapsed < MAX_WAIT:
+		var dt := get_physics_process_delta_time()
+		if linear_velocity.length() < 0.05 and angular_velocity.length() < 0.05:
+			still_time += dt
+			if still_time >= REQUIRED_STILL_TIME:
+				break
+		else:
+			still_time = 0.0
 		await get_tree().physics_frame
-		elapsed += get_physics_process_delta_time()
+		elapsed += dt
 
 	return _read_top_value()
 

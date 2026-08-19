@@ -43,10 +43,20 @@ func _create_token() -> void:
 	add_child(token)
 	move_token(0)
 
-## 플레이어 토큰을 index 칸 위치로 옮긴다
+## 플레이어 토큰을 index 칸 위치로 즉시 옮긴다
 func move_token(index: int) -> void:
 	var cell_pos := _grid_to_pixel(_index_to_grid(index))
 	token.position = cell_pos + Vector2(TILE_SIZE, TILE_SIZE) * 0.3
+
+## start_index에서 steps칸만큼 한 칸씩 순서대로 이동하는 애니메이션을 재생한다
+func animate_move(start_index: int, steps: int) -> void:
+	for i in range(1, steps + 1):
+		var index := wrapi(start_index + i, 0, board_data.TOTAL_CELLS)
+		var cell_pos := _grid_to_pixel(_index_to_grid(index))
+		var target := cell_pos + Vector2(TILE_SIZE, TILE_SIZE) * 0.3
+		var tween := create_tween()
+		tween.tween_property(token, "position", target, 0.12)
+		await tween.finished
 
 func _grid_to_pixel(grid: Vector2i) -> Vector2:
 	return Vector2(grid.x, grid.y) * (TILE_SIZE + TILE_GAP)
