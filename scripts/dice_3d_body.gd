@@ -1,9 +1,13 @@
 class_name Dice3DBody
 extends RigidBody3D
 
-const HALF := 0.5
 ## 각 면의 로컬 방향(±X/±Y/±Z)에 대응하는 눈금 값. 마주보는 면의 합이 7이 되도록 배치(실제 주사위 규칙)
 const FACE_VALUES := {"+X": 1, "-X": 6, "+Y": 2, "-Y": 5, "+Z": 3, "-Z": 4}
+
+## 아래 값들은 Dice3DView가 만들 때 채워준다(Dice3DView의 Inspector에서 디자인을 바꿀 수 있음)
+var half_size := 0.5
+var face_color := Color(0.95, 0.95, 0.92)
+var pip_color := Color(0.15, 0.15, 0.15)
 
 func _ready() -> void:
 	_build_visual_and_collision()
@@ -76,7 +80,7 @@ func _build_visual_and_collision() -> void:
 
 	for i in range(faces.size()):
 		var material := StandardMaterial3D.new()
-		material.albedo_texture = DiceFaceTexture.make(faces[i]["value"])
+		material.albedo_texture = DiceFaceTexture.make(faces[i]["value"], face_color, pip_color)
 		## 손으로 만든 메시라 감기 방향이 엔진 기준과 어긋나도 면이 사라지지 않도록 컬링을 끔
 		material.cull_mode = BaseMaterial3D.CULL_DISABLED
 		mesh.surface_set_material(i, material)
@@ -86,14 +90,14 @@ func _build_visual_and_collision() -> void:
 	add_child(mesh_instance)
 
 	var shape := BoxShape3D.new()
-	shape.size = Vector3.ONE * (HALF * 2)
+	shape.size = Vector3.ONE * (half_size * 2)
 	var collision := CollisionShape3D.new()
 	collision.shape = shape
 	add_child(collision)
 
 ## 각 면을 이루는 네 꼭짓점(시계 반대 방향, 바깥쪽 법선)과 그 면의 눈금 값
 func _face_definitions() -> Array:
-	var h := HALF
+	var h := half_size
 	var a := Vector3(-h, -h, -h)
 	var b := Vector3(h, -h, -h)
 	var c := Vector3(h, h, -h)

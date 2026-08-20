@@ -5,6 +5,14 @@ extends Node2D
 ## 한 바퀴를 완주할 때마다 늘어나는 최대 HP
 @export var lap_max_hp_bonus: int = 10
 
+@export_group("팝업 효과 디자인")
+@export var gain_color: Color = Color(0.3, 1.0, 0.4)
+@export var loss_color: Color = Color(1.0, 0.4, 0.4)
+@export var skill_color: Color = Color(1.0, 0.85, 0.3)
+@export var popup_font_size: int = 32
+@export var popup_float_distance: float = 50.0
+@export var popup_duration: float = 1.1
+
 var board_data: BoardData
 var player: PlayerToken
 var stats: PlayerStats
@@ -61,7 +69,7 @@ func _on_boss_defeated() -> void:
 	stats.hp = stats.max_hp
 	_update_status()
 	_float_popup(big_hp_label.position + Vector2(0.0, -44.0),
-		"최대 HP +%d, 전부 회복!" % lap_max_hp_bonus, Color(0.3, 1.0, 0.4))
+		"최대 HP +%d, 전부 회복!" % lap_max_hp_bonus, gain_color)
 
 ## 이동 경로에서 지나친 꼭짓점칸을 처리한다(출발칸이면 스탯 선택 후 보스 전투, 아니면 일반 전투)
 func _resolve_corner(index: int) -> void:
@@ -73,7 +81,7 @@ func _resolve_corner(index: int) -> void:
 		_show_stat_gain(chosen, 1)
 		_update_status()
 
-	var enemy := EnemyData.create_boss() if is_boss else EnemyData.create_normal(index)
+	var enemy := EnemyData.create_boss(player.lap_count, win_laps) if is_boss else EnemyData.create_normal(index)
 	var won: bool = await battle_view.start_battle(stats, enemy)
 	if won:
 		var reward_stat: PlayerStats.StatType = PlayerStats.ALL_STATS.pick_random()
@@ -81,6 +89,11 @@ func _resolve_corner(index: int) -> void:
 		_show_stat_gain(reward_stat, 1)
 		if is_boss:
 			_on_boss_defeated()
+	else:
+		## 패배 페널티: 승리 보상(랜덤 스탯 +1)과 정반대로 랜덤 스탯 -1
+		var penalty_stat: PlayerStats.StatType = PlayerStats.ALL_STATS.pick_random()
+		stats.add_stat(penalty_stat, -1)
+		_show_stat_gain(penalty_stat, -1)
 	_update_status()
 
 ## 도착한 칸의 종류에 따라 효과를 적용한다
@@ -99,7 +112,8 @@ func _resolve_cell(cell_type: BoardData.CellType, index: int) -> void:
 			stats.add_stat(effect["stat"], effect["amount"])
 			_show_stat_gain(effect["stat"], effect["amount"])
 		BoardData.CellType.SKILL:
-			var skill: Dictionary = GameContent.draw_skill_card()
+			var owned_names := stats.skill_cards.map(func(card): return card["name"])
+			var skill: Dictionary = GameContent.draw_skill_card(owned_names)
 			stats.skill_cards.append(skill)
 			_show_skill_gain(skill["name"])
 	_update_status()
@@ -113,23 +127,23 @@ func _show_stat_gain(stat_type: PlayerStats.StatType, amount: int) -> void:
 
 	_float_popup(anchor_label.position + Vector2(0.0, -44.0),
 		"%s %+d" % [stats.stat_name(stat_type), amount],
-		Color(0.3, 1.0, 0.4) if amount > 0 else Color(1.0, 0.4, 0.4))
+		gain_color if amount > 0 else loss_color)
 
 ## 스킬카드 획득을 스킬카드 표시 옆에 크게 띄웠다가 위로 떠오르며 사라지게 한다
 func _show_skill_gain(skill_name: String) -> void:
-	_float_popup(big_skill_label.position + Vector2(0.0, -40.0), "%s 획득!" % skill_name, Color(1.0, 0.85, 0.3))
+	_float_popup(big_skill_label.position + Vector2(0.0, -40.0), "%s 획득!" % skill_name, skill_color)
 
 func _float_popup(start_pos: Vector2, text: String, color: Color) -> void:
 	var popup := Label.new()
 	popup.text = text
 	popup.add_theme_color_override("font_color", color)
-	popup.add_theme_font_size_override("font_size", 32)
+	popup.add_theme_font_size_override("font_size", popup_font_size)
 	popup.position = start_pos
 	$UI.add_child(popup)
 	var tween := create_tween()
 	tween.set_parallel(true)
-	tween.tween_property(popup, "position:y", start_pos.y - 50, 1.1)
-	tween.tween_property(popup, "modulate:a", 0.0, 1.1)
+	tween.tween_property(popup, "position:y", start_pos.y - popup_float_distance, popup_duration)
+	tween.tween_property(popup, "modulate:a", 0.0, popup_duration)
 	tween.chain().tween_callback(popup.queue_free)
 
 func _update_status() -> void:

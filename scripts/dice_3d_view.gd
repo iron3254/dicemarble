@@ -1,6 +1,13 @@
 class_name Dice3DView
 extends SubViewportContainer
 
+## 주사위 디자인 — Inspector에서 바로 바꿀 수 있음
+@export var dice_face_color: Color = Color(0.95, 0.95, 0.92)
+@export var dice_pip_color: Color = Color(0.15, 0.15, 0.15)
+@export var dice_half_size: float = 0.5
+@export var floor_color: Color = Color(0.2, 0.45, 0.25)
+@export var background_color: Color = Color(0.13, 0.13, 0.16)
+
 var _dice_body: Dice3DBody
 
 func _ready() -> void:
@@ -12,7 +19,7 @@ func _ready() -> void:
 
 	var env := Environment.new()
 	env.background_mode = Environment.BG_COLOR
-	env.background_color = Color(0.13, 0.13, 0.16)
+	env.background_color = background_color
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	env.ambient_light_color = Color(0.55, 0.55, 0.55)
 	env.ambient_light_energy = 0.6
@@ -46,7 +53,7 @@ func _ready() -> void:
 	var floor_mesh := MeshInstance3D.new()
 	floor_mesh.mesh = box_mesh
 	var floor_material := StandardMaterial3D.new()
-	floor_material.albedo_color = Color(0.2, 0.45, 0.25)
+	floor_material.albedo_color = floor_color
 	floor_mesh.material_override = floor_material
 	floor_body.add_child(floor_mesh)
 
@@ -60,6 +67,9 @@ func _ready() -> void:
 	_add_wall(viewport, Vector3(half, wall_height / 2.0, 0), Vector3(wall_thickness, wall_height, 4))
 
 	_dice_body = Dice3DBody.new()
+	_dice_body.face_color = dice_face_color
+	_dice_body.pip_color = dice_pip_color
+	_dice_body.half_size = dice_half_size
 	viewport.add_child(_dice_body)
 	_dice_body.position = Vector3(0, 1.2, 0)
 

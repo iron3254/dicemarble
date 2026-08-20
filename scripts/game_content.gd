@@ -28,8 +28,10 @@ const RANDOM_EFFECTS := [
 const SKILL_CARDS := [
 	{"name": "강타", "category": SkillCategory.ATTACK, "cost": 2, "power": 2},
 	{"name": "연속 베기", "category": SkillCategory.ATTACK, "cost": 1, "power": 1},
+	{"name": "필살기", "category": SkillCategory.ATTACK, "cost": 3, "power": 3},
 	{"name": "방패 올리기", "category": SkillCategory.DEFENSE, "cost": 2, "power": 2},
 	{"name": "회피", "category": SkillCategory.DEFENSE, "cost": 1, "power": 1},
+	{"name": "철벽", "category": SkillCategory.DEFENSE, "cost": 3, "power": 3},
 ]
 
 static func draw_event_card() -> Dictionary:
@@ -40,5 +42,10 @@ static func roll_random_effect() -> Dictionary:
 	var index := Dice.roll() - 1
 	return RANDOM_EFFECTS[index]
 
-static func draw_skill_card() -> Dictionary:
-	return SKILL_CARDS.pick_random()
+## 이미 가진 스킬카드(owned_names)와 겹치지 않는 카드를 우선 뽑는다.
+## 전부 이미 가지고 있으면(4종 다 모으면) 그때는 중복도 허용한다.
+static func draw_skill_card(owned_names: Array = []) -> Dictionary:
+	var candidates := SKILL_CARDS.filter(func(card): return not owned_names.has(card["name"]))
+	if candidates.is_empty():
+		candidates = SKILL_CARDS
+	return candidates.pick_random()

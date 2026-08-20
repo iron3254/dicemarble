@@ -10,8 +10,11 @@ const NORMAL_TEMPLATES := [
 ]
 
 const BOSS_TEMPLATE := {"name": "관문 수호자", "hp": 25, "attack": 5}
-const BOSS_HP_MULTIPLIER := 2.0
-const BOSS_ATTACK_MULTIPLIER := 1.5
+## 보스는 몇 바퀴째인지에 따라 이 두 범위 사이에서 점점 강해진다(1바퀴째=최소, 마지막 바퀴=최대)
+const BOSS_HP_MULTIPLIER_MIN := 1.1
+const BOSS_HP_MULTIPLIER_MAX := 2.0
+const BOSS_ATTACK_MULTIPLIER_MIN := 0.9
+const BOSS_ATTACK_MULTIPLIER_MAX := 1.5
 
 var enemy_name: String
 var hp: int
@@ -29,8 +32,11 @@ static func create_normal(board_index: int) -> EnemyData:
 	var template: Dictionary = NORMAL_TEMPLATES[board_index % NORMAL_TEMPLATES.size()]
 	return EnemyData.new(template["name"], template["hp"], template["attack"])
 
-## 출발칸을 지날 때 등장하는 강화된 보스
-static func create_boss() -> EnemyData:
-	var hp := int(round(BOSS_TEMPLATE["hp"] * BOSS_HP_MULTIPLIER))
-	var attack := int(round(BOSS_TEMPLATE["attack"] * BOSS_ATTACK_MULTIPLIER))
+## 출발칸을 지날 때 등장하는 강화된 보스. lap은 몇 바퀴째 통과인지(1부터 시작), total_laps는 승리에 필요한 총 바퀴 수
+static func create_boss(lap: int, total_laps: int) -> EnemyData:
+	var t := float(lap - 1) / float(max(1, total_laps - 1))
+	var hp_mult: float = lerp(BOSS_HP_MULTIPLIER_MIN, BOSS_HP_MULTIPLIER_MAX, t)
+	var attack_mult: float = lerp(BOSS_ATTACK_MULTIPLIER_MIN, BOSS_ATTACK_MULTIPLIER_MAX, t)
+	var hp := int(round(BOSS_TEMPLATE["hp"] * hp_mult))
+	var attack := int(round(BOSS_TEMPLATE["attack"] * attack_mult))
 	return EnemyData.new(BOSS_TEMPLATE["name"], hp, attack)
