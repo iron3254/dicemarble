@@ -4,6 +4,8 @@ extends Node2D
 @export var win_laps: int = 3
 ## 한 바퀴를 완주할 때마다 늘어나는 최대 HP
 @export var lap_max_hp_bonus: int = 10
+## 한 바퀴를 완주할 때마다 보드 한 변에 늘어나는 칸 수
+@export var side_length_growth: int = 2
 
 @export_group("팝업 효과 디자인")
 @export var gain_color: Color = Color(0.3, 1.0, 0.4)
@@ -63,13 +65,21 @@ func take_turn() -> void:
 	else:
 		roll_button.disabled = false
 
-## 출발선 보스를 잡았을 때: 최대 HP를 늘리고 HP를 전부 회복시킨다
+## 출발선 보스를 잡았을 때: 최대 HP를 늘리고 HP를 전부 회복시킨 뒤, 더 커진 보드로 교체한다
 func _on_boss_defeated() -> void:
 	stats.max_hp += lap_max_hp_bonus
 	stats.hp = stats.max_hp
+	_grow_board()
 	_update_status()
-	_float_popup(big_hp_label.position + Vector2(0.0, -44.0),
+	_float_popup(big_hp_bar.position + Vector2(0.0, 40.0),
 		"최대 HP +%d, 전부 회복!" % lap_max_hp_bonus, gain_color)
+
+## 보드 한 변을 side_length_growth만큼 늘린 새 보드로 교체하고, 플레이어를 새 보드의 출발칸으로 되돌린다
+func _grow_board() -> void:
+	var new_side_length := board_data.SIDE_LENGTH + side_length_growth
+	board_data = BoardData.new(new_side_length)
+	board_view.setup(board_data)
+	player.board_index = 0
 
 ## 이동 경로에서 지나친 꼭짓점칸을 처리한다(출발칸이면 스탯 선택 후 보스 전투, 아니면 일반 전투)
 func _resolve_corner(index: int) -> void:
@@ -88,6 +98,8 @@ func _resolve_corner(index: int) -> void:
 		stats.add_stat(reward_stat, 1)
 		_show_stat_gain(reward_stat, 1)
 		if is_boss:
+			## 스탯 팝업이 뜬 직후 바로 겹치지 않도록 살짝 텀을 두고 HP 보너스 팝업을 띄운다
+			await get_tree().create_timer(0.35).timeout
 			_on_boss_defeated()
 	else:
 		## 패배 페널티: 승리 보상(랜덤 스탯 +1)과 정반대로 랜덤 스탯 -1

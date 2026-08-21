@@ -46,6 +46,13 @@ const RESULT_PAUSE := 0.9
 @export var flash_duration: float = 0.3
 @export var lunge_distance: float = 55.0
 
+@export_group("턴 구분")
+## 내 턴/상대 턴일 때 각각 턴 표시 글자색(아바타 색과 맞춤)
+@export var player_turn_color: Color = Color(0.4, 0.6, 1.0)
+@export var enemy_turn_color: Color = Color(1.0, 0.45, 0.4)
+## 내 턴이 아닐 때 상대(또는 그 반대)가 살짝 어두워지는 정도
+@export var inactive_dim_color: Color = Color(0.45, 0.45, 0.48)
+
 var _stats: PlayerStats
 var _enemy: EnemyData
 
@@ -57,6 +64,8 @@ func start_battle(stats: PlayerStats, enemy: EnemyData) -> bool:
 	_stats = stats
 	_enemy = enemy
 	visible = true
+	player_avatar.modulate = Color(1, 1, 1)
+	enemy_avatar.modulate = Color(1, 1, 1)
 	dice_roll_label.text = ""
 	dice_skill_label.text = ""
 	dice_stat_label.text = ""
@@ -64,7 +73,7 @@ func start_battle(stats: PlayerStats, enemy: EnemyData) -> bool:
 	_pop_result(enemy_avatar, "등장!", enemy.enemy_name, neutral_color)
 
 	while true:
-		await _show_turn("내 턴")
+		await _show_turn("내 턴", player_avatar, enemy_avatar, player_turn_color)
 		await _player_attack_phase()
 		_update_status()
 		if _enemy.hp <= 0:
@@ -76,7 +85,7 @@ func start_battle(stats: PlayerStats, enemy: EnemyData) -> bool:
 			visible = false
 			return true
 
-		await _show_turn("상대 턴")
+		await _show_turn("상대 턴", enemy_avatar, player_avatar, enemy_turn_color)
 		await _enemy_attack_phase()
 		_stats.mana = min(_stats.mana_max, _stats.mana + 1)
 		_update_status()
@@ -175,10 +184,15 @@ func _show_dice_result(roll: int, stat_value: int, skill_power: int = 0) -> void
 	dice_skill_label.text = "+%d" % skill_power if skill_power != 0 else ""
 	dice_stat_label.text = "+%d" % stat_value if stat_value != 0 else ""
 
-## 턴 이름을 잠깐 크게 보여줘서 내 턴/상대 턴을 눈으로 구분하기 쉽게 한다
-func _show_turn(text: String) -> void:
+## 턴 이름을 색깔 있게 보여주고, 이번 턴의 주인공 아바타는 밝게·상대는 살짝 어둡게 해서 눈으로 바로 구분되게 한다
+func _show_turn(text: String, active_avatar: ColorRect, inactive_avatar: ColorRect, color: Color) -> void:
 	turn_label.text = text
+	turn_label.add_theme_color_override("font_color", color)
+	active_avatar.modulate = Color(1, 1, 1)
+	inactive_avatar.modulate = inactive_dim_color
+	dice_3d_view.set_floor_color(color)
 	await get_tree().create_timer(TURN_PAUSE).timeout
+	inactive_avatar.modulate = Color(1, 1, 1)
 
 ## 스킬 이름 → 버튼에 붙일 아이콘 경로
 const SKILL_ICON_PATHS := {

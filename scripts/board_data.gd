@@ -11,26 +11,47 @@ enum CellType {
 	SKILL,   ## 스킬칸
 }
 
-## 한 변의 칸 수(그 변의 시작 꼭짓점 포함, 다음 꼭짓점은 제외)
-const SIDE_LENGTH: int = 7
-const TOTAL_CELLS: int = SIDE_LENGTH * 4
-
-## 꼭짓점을 제외하고 한 변에 반복 배치할 사이드칸 순서(6칸: 스탯3/이벤트1/랜덤1/스킬1)
-const SIDE_PATTERN: Array[CellType] = [
-	CellType.STAT, CellType.STAT, CellType.EVENT,
-	CellType.STAT, CellType.RANDOM, CellType.SKILL,
-]
+## 한 변의 칸 수(그 변의 시작 꼭짓점 포함, 다음 꼭짓점은 제외). 바퀴가 늘수록 커짐(생성자로 전달)
+var SIDE_LENGTH: int
+var TOTAL_CELLS: int
 
 var cells: Array[CellType] = []
 
-func _init() -> void:
+## side_length: 한 변의 칸 수(꼭짓점 포함). 기본 7칸 = 총 28칸
+func _init(side_length: int = 7) -> void:
+	SIDE_LENGTH = side_length
+	TOTAL_CELLS = SIDE_LENGTH * 4
 	cells = _build_cells()
 
+## 꼭짓점(4개) 위치는 고정하고, 나머지 칸은 스탯:이벤트:랜덤:스킬 = 3:1:1:1 비율로 채운 뒤 무작위로 섞어서 배치한다
 func _build_cells() -> Array[CellType]:
+	var per_side := SIDE_LENGTH - 1
+	var non_corner_total := per_side * 4
+
+	var stat_count := int(round(non_corner_total * 0.5))
+	var remaining := non_corner_total - stat_count
+	var event_count := remaining / 3
+	var random_count := remaining / 3
+	var skill_count := remaining - event_count - random_count
+
+	var side_cells: Array[CellType] = []
+	for i in range(stat_count):
+		side_cells.append(CellType.STAT)
+	for i in range(event_count):
+		side_cells.append(CellType.EVENT)
+	for i in range(random_count):
+		side_cells.append(CellType.RANDOM)
+	for i in range(skill_count):
+		side_cells.append(CellType.SKILL)
+	side_cells.shuffle()
+
 	var result: Array[CellType] = []
+	var side_cell_index := 0
 	for side in range(4):
 		result.append(CellType.START if side == 0 else CellType.CORNER)
-		result.append_array(SIDE_PATTERN)
+		for i in range(per_side):
+			result.append(side_cells[side_cell_index])
+			side_cell_index += 1
 	return result
 
 func get_cell_type(index: int) -> CellType:

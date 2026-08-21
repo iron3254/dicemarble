@@ -9,6 +9,7 @@ extends SubViewportContainer
 @export var background_color: Color = Color(0.13, 0.13, 0.16)
 
 var _dice_body: Dice3DBody
+var _floor_material: StandardMaterial3D
 
 func _ready() -> void:
 	stretch = true
@@ -52,9 +53,9 @@ func _ready() -> void:
 	box_mesh.size = Vector3(4, 0.2, 4)
 	var floor_mesh := MeshInstance3D.new()
 	floor_mesh.mesh = box_mesh
-	var floor_material := StandardMaterial3D.new()
-	floor_material.albedo_color = floor_color
-	floor_mesh.material_override = floor_material
+	_floor_material = StandardMaterial3D.new()
+	_floor_material.albedo_color = floor_color
+	floor_mesh.material_override = _floor_material
 	floor_body.add_child(floor_mesh)
 
 	## 바닥 가장자리에 눈에 안 보이는 벽을 세워 주사위가 굴러 떨어지지 않게 막는다
@@ -86,3 +87,7 @@ func _add_wall(viewport: Node, pos: Vector3, size: Vector3) -> void:
 ## 3D 주사위를 굴리고, 물리적으로 완전히 멈춘 뒤 윗면 눈금 값을 반환한다
 func roll() -> int:
 	return await _dice_body.roll_physics()
+
+## 바닥 색을 바꾼다(전투에서 내 턴/상대 턴 구분 등에 사용)
+func set_floor_color(color: Color) -> void:
+	_floor_material.albedo_color = color
