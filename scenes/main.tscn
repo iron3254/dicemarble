@@ -5,9 +5,9 @@
 [ext_resource type="Script" uid="uid://qxo88fw5fnjn" path="res://scripts/stat_choice_view.gd" id="4"]
 [ext_resource type="Script" uid="uid://b65owy0422gfj" path="res://scripts/battle_view.gd" id="5"]
 [ext_resource type="Script" uid="uid://dtafohjtb3qc4" path="res://scripts/dice_3d_view.gd" id="6"]
-[ext_resource type="Script" path="res://scripts/skill_list_popup.gd" id="8"]
-[ext_resource type="Texture2D" path="res://assets/icons/player_character.svg" id="9"]
-[ext_resource type="Texture2D" path="res://assets/icons/enemy_wolf.svg" id="10"]
+[ext_resource type="Script" uid="uid://cfad8hkmxji7r" path="res://scripts/skill_list_popup.gd" id="8"]
+[ext_resource type="Texture2D" uid="uid://b1dcm7iimxj4n" path="res://assets/icons/player_character.svg" id="9"]
+[ext_resource type="Texture2D" uid="uid://carvljrv71jec" path="res://assets/icons/enemy_wolf.svg" id="10"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bar_bg"]
 bg_color = Color(0.18, 0.18, 0.2, 1)
@@ -142,6 +142,7 @@ offset_bottom = 368.0
 text = "내 스킬 보기"
 
 [node name="SkillListPopup" type="Control" parent="UI" unique_id=300000008]
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -149,23 +150,25 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("8")
 
-[node name="Dim" type="ColorRect" parent="UI/SkillListPopup"]
-anchors_preset = 15
+[node name="Dim" type="ColorRect" parent="UI/SkillListPopup" unique_id=315816726]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0.6)
 mouse_filter = 1
+color = Color(0, 0, 0, 0.6)
 
-[node name="Panel" type="ColorRect" parent="UI/SkillListPopup"]
+[node name="Panel" type="ColorRect" parent="UI/SkillListPopup" unique_id=1672631028]
+layout_mode = 0
 offset_left = 326.0
 offset_top = 110.0
 offset_right = 826.0
 offset_bottom = 510.0
 color = Color(0.14, 0.14, 0.17, 0.97)
 
-[node name="TitleLabel" type="Label" parent="UI/SkillListPopup/Panel"]
+[node name="TitleLabel" type="Label" parent="UI/SkillListPopup/Panel" unique_id=327149106]
+layout_mode = 0
 offset_left = 20.0
 offset_top = 12.0
 offset_right = 420.0
@@ -173,27 +176,30 @@ offset_bottom = 46.0
 theme_override_font_sizes/font_size = 26
 text = "보유 스킬카드"
 
-[node name="CloseButton" type="Button" parent="UI/SkillListPopup/Panel"]
+[node name="CloseButton" type="Button" parent="UI/SkillListPopup/Panel" unique_id=1916615205]
+layout_mode = 0
 offset_left = 430.0
 offset_top = 10.0
 offset_right = 490.0
 offset_bottom = 44.0
 text = "닫기"
 
-[node name="EmptyLabel" type="Label" parent="UI/SkillListPopup/Panel"]
+[node name="EmptyLabel" type="Label" parent="UI/SkillListPopup/Panel" unique_id=1428962762]
+layout_mode = 0
 offset_left = 20.0
 offset_top = 60.0
 offset_right = 480.0
 offset_bottom = 100.0
 text = "아직 스킬카드가 없습니다"
 
-[node name="ScrollContainer" type="ScrollContainer" parent="UI/SkillListPopup/Panel"]
+[node name="ScrollContainer" type="ScrollContainer" parent="UI/SkillListPopup/Panel" unique_id=1774379606]
+layout_mode = 0
 offset_left = 20.0
 offset_top = 60.0
 offset_right = 480.0
 offset_bottom = 380.0
 
-[node name="ListContainer" type="VBoxContainer" parent="UI/SkillListPopup/Panel/ScrollContainer"]
+[node name="ListContainer" type="VBoxContainer" parent="UI/SkillListPopup/Panel/ScrollContainer" unique_id=76587455]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 10
@@ -271,7 +277,8 @@ offset_right = 320.0
 offset_bottom = 316.0
 color = Color(0.4, 0.6, 1, 1)
 
-[node name="CharacterIcon" type="TextureRect" parent="UI/BattleView/Background/PlayerAvatar"]
+[node name="CharacterIcon" type="TextureRect" parent="UI/BattleView/Background/PlayerAvatar" unique_id=2032359519]
+layout_mode = 0
 offset_left = 55.0
 offset_top = 25.0
 offset_right = 185.0
@@ -327,7 +334,8 @@ offset_right = 1072.0
 offset_bottom = 316.0
 color = Color(1, 0.45, 0.4, 1)
 
-[node name="CharacterIcon" type="TextureRect" parent="UI/BattleView/Background/EnemyAvatar"]
+[node name="CharacterIcon" type="TextureRect" parent="UI/BattleView/Background/EnemyAvatar" unique_id=1602607901]
+layout_mode = 0
 offset_left = 55.0
 offset_top = 25.0
 offset_right = 185.0

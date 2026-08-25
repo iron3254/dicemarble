@@ -15,6 +15,9 @@ extends Node2D
 @export var popup_float_distance: float = 50.0
 @export var popup_duration: float = 1.1
 
+## 배경음악 크기(dB) — 효과음에 묻히지 않도록 기본으로 살짝 낮춤
+@export var bgm_volume_db: float = -10.0
+
 var board_data: BoardData
 var player: PlayerToken
 var stats: PlayerStats
@@ -36,6 +39,8 @@ var stats: PlayerStats
 @onready var skill_list_button: Button = $UI/SkillListButton
 @onready var skill_list_popup: SkillListPopup = $UI/SkillListPopup
 
+var _bgm_player: AudioStreamPlayer
+
 func _ready() -> void:
 	board_data = BoardData.new()
 	player = PlayerToken.new()
@@ -43,7 +48,18 @@ func _ready() -> void:
 	board_view.setup(board_data)
 	roll_button.pressed.connect(take_turn)
 	skill_list_button.pressed.connect(func(): skill_list_popup.open(stats.skill_cards))
+	_start_bgm()
 	_update_status()
+
+## 배경음악을 계속 반복 재생한다(보드/전투 화면 구분 없이 게임 내내 깔림)
+func _start_bgm() -> void:
+	_bgm_player = AudioStreamPlayer.new()
+	var stream: AudioStreamMP3 = load("res://assets/audio/bgm_board.mp3")
+	stream.loop = true
+	_bgm_player.stream = stream
+	_bgm_player.volume_db = bgm_volume_db
+	add_child(_bgm_player)
+	_bgm_player.play()
 
 ## 한 턴 진행: 3D 주사위를 굴려 이동 → 지나친 꼭짓점 처리 → 도착 칸 효과 → 승리 체크
 func take_turn() -> void:
