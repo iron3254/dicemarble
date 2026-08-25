@@ -55,9 +55,17 @@ const RESULT_PAUSE := 0.9
 
 var _stats: PlayerStats
 var _enemy: EnemyData
+var _attack_sound: AudioStreamPlayer
+var _defense_sound: AudioStreamPlayer
 
 func _ready() -> void:
 	visible = false
+	_attack_sound = AudioStreamPlayer.new()
+	_attack_sound.stream = load("res://assets/audio/attack.wav")
+	add_child(_attack_sound)
+	_defense_sound = AudioStreamPlayer.new()
+	_defense_sound.stream = load("res://assets/audio/defense.wav")
+	add_child(_defense_sound)
 
 ## 전투를 진행하고 승리하면 true, 패배하면 false를 반환한다
 func start_battle(stats: PlayerStats, enemy: EnemyData) -> bool:
@@ -128,6 +136,7 @@ func _player_attack_phase() -> void:
 	_show_dice_result(roll, _stats.attack, chosen["power"])
 	var damage: int = roll + _stats.attack + chosen["power"]
 	_enemy.hp = max(0, _enemy.hp - damage)
+	_attack_sound.play()
 	if chosen["kind"] == "skill":
 		_play_skill_effect(chosen["name"], player_avatar, Vector2(lunge_distance, 0), enemy_avatar)
 	else:
@@ -169,6 +178,7 @@ func _enemy_attack_phase() -> void:
 	var mitigation: int = roll + _stats.defense + chosen["power"]
 	var final_damage: int = max(0, enemy_damage - mitigation)
 	_stats.hp = max(0, _stats.hp - final_damage)
+	_defense_sound.play()
 	_lunge(enemy_avatar, Vector2(-lunge_distance, 0))
 	if chosen["kind"] == "skill":
 		_play_skill_effect(chosen["name"], player_avatar, Vector2(-lunge_distance, 0))

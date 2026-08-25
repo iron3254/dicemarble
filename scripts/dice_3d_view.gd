@@ -10,9 +10,14 @@ extends SubViewportContainer
 
 var _dice_body: Dice3DBody
 var _floor_material: StandardMaterial3D
+var _roll_sound: AudioStreamPlayer
 
 func _ready() -> void:
 	stretch = true
+
+	_roll_sound = AudioStreamPlayer.new()
+	_roll_sound.stream = load("res://assets/audio/dice_roll.wav")
+	add_child(_roll_sound)
 	var viewport := SubViewport.new()
 	viewport.size = Vector2i(300, 300)
 	viewport.own_world_3d = true
@@ -58,14 +63,17 @@ func _ready() -> void:
 	floor_mesh.material_override = _floor_material
 	floor_body.add_child(floor_mesh)
 
-	## 바닥 가장자리에 눈에 안 보이는 벽을 세워 주사위가 굴러 떨어지지 않게 막는다
-	var wall_height := 1.4
+	## 바닥 가장자리에 눈에 안 보이는 벽(+천장)을 세워 주사위가 튀어오르다 밖으로 나가지 않게 막는다
+	## 벽이 너무 낮으면 주사위가 위로 세게 튈 때(최대 impulse 기준 정점 높이 약 1.8) 벽을 넘어갈 수 있어 넉넉히 잡음
+	var wall_height := 4.0
 	var wall_thickness := 0.2
 	var half := 2.0
 	_add_wall(viewport, Vector3(0, wall_height / 2.0, -half), Vector3(4, wall_height, wall_thickness))
 	_add_wall(viewport, Vector3(0, wall_height / 2.0, half), Vector3(4, wall_height, wall_thickness))
 	_add_wall(viewport, Vector3(-half, wall_height / 2.0, 0), Vector3(wall_thickness, wall_height, 4))
 	_add_wall(viewport, Vector3(half, wall_height / 2.0, 0), Vector3(wall_thickness, wall_height, 4))
+	## 천장: 네 벽을 다 세워도 이론상 정점 높이를 넘는 예외 상황까지 대비하는 안전망
+	_add_wall(viewport, Vector3(0, wall_height, 0), Vector3(4, wall_thickness, 4))
 
 	_dice_body = Dice3DBody.new()
 	_dice_body.face_color = dice_face_color
@@ -74,18 +82,19 @@ func _ready() -> void:
 	viewport.add_child(_dice_body)
 	_dice_body.position = Vector3(0, 1.2, 0)
 
-func _add_wall(viewport: Node, pos: Vector3, size: Vector3) -> void:
+func _add_wall(viewport: Node, pos: Vector3, wall_size: Vector3) -> void:
 	var wall := StaticBody3D.new()
 	viewport.add_child(wall)
 	wall.position = pos
 	var shape := BoxShape3D.new()
-	shape.size = size
+	shape.size = wall_size
 	var collision := CollisionShape3D.new()
 	collision.shape = shape
 	wall.add_child(collision)
 
 ## 3D 주사위를 굴리고, 물리적으로 완전히 멈춘 뒤 윗면 눈금 값을 반환한다
 func roll() -> int:
+	_roll_sound.play()
 	return await _dice_body.roll_physics()
 
 ## 바닥 색을 바꾼다(전투에서 내 턴/상대 턴 구분 등에 사용)

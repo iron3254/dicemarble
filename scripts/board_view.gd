@@ -33,11 +33,19 @@ var token: ColorRect
 var _grid_span: int
 var _cell_size: float
 var _cell_gap: float
+var _move_sound: AudioStreamPlayer
+
+func _ready() -> void:
+	_move_sound = AudioStreamPlayer.new()
+	_move_sound.stream = load("res://assets/audio/piece_move.wav")
+	add_child(_move_sound)
 
 ## 보드 데이터로 새로 그린다(이미 그려진 보드가 있으면 지우고 다시 그림 — 바퀴마다 커진 보드로 교체할 때 사용)
 func setup(data: BoardData) -> void:
+	## _move_sound는 _ready()에서 만든 재생기라 보드를 다시 그릴 때 같이 지우면 안 됨
 	for child in get_children():
-		child.free()
+		if child != _move_sound:
+			child.free()
 
 	board_data = data
 	_grid_span = board_data.SIDE_LENGTH
@@ -102,6 +110,7 @@ func animate_move(start_index: int, steps: int) -> void:
 	for i in range(1, steps + 1):
 		var index := wrapi(start_index + i, 0, board_data.TOTAL_CELLS)
 		var target := _token_position_in_cell(index)
+		_move_sound.play()
 		var tween := create_tween()
 		tween.tween_property(token, "position", target, 0.12)
 		await tween.finished
