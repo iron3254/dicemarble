@@ -5,6 +5,7 @@ extends Control
 signal action_chosen(option: Dictionary)
 
 @onready var enemy_avatar: ColorRect = $Background/EnemyAvatar
+@onready var enemy_icon: TextureRect = $Background/EnemyAvatar/CharacterIcon
 @onready var enemy_name_label: Label = $Background/EnemyNameLabel
 @onready var enemy_hp_bar: ProgressBar = $Background/EnemyHpBar
 @onready var enemy_hp_label: Label = $Background/EnemyHpLabel
@@ -66,6 +67,7 @@ func start_battle(stats: PlayerStats, enemy: EnemyData) -> bool:
 	visible = true
 	player_avatar.modulate = Color(1, 1, 1)
 	enemy_avatar.modulate = Color(1, 1, 1)
+	enemy_icon.texture = load(enemy.icon)
 	dice_roll_label.text = ""
 	dice_skill_label.text = ""
 	dice_stat_label.text = ""
@@ -114,6 +116,7 @@ func _player_attack_phase() -> void:
 			options.append({
 				"label": "%s (마력 %d, 위력 +%d)" % [card["name"], card["cost"], card["power"]],
 				"name": card["name"],
+				"icon": card["icon"],
 				"kind": "skill",
 				"cost": card["cost"],
 				"power": card["power"],
@@ -154,6 +157,7 @@ func _enemy_attack_phase() -> void:
 			options.append({
 				"label": "%s (마력 %d, 경감 +%d)" % [card["name"], card["cost"], card["power"]],
 				"name": card["name"],
+				"icon": card["icon"],
 				"kind": "skill",
 				"cost": card["cost"],
 				"power": card["power"],
@@ -194,16 +198,6 @@ func _show_turn(text: String, active_avatar: ColorRect, inactive_avatar: ColorRe
 	await get_tree().create_timer(TURN_PAUSE).timeout
 	inactive_avatar.modulate = Color(1, 1, 1)
 
-## 스킬 이름 → 버튼에 붙일 아이콘 경로
-const SKILL_ICON_PATHS := {
-	"강타": "res://assets/icons/skill_heavy_strike.svg",
-	"연속 베기": "res://assets/icons/skill_multi_slash.svg",
-	"필살기": "res://assets/icons/skill_finishing_blow.svg",
-	"방패 올리기": "res://assets/icons/skill_shield.svg",
-	"회피": "res://assets/icons/skill_dodge.svg",
-	"철벽": "res://assets/icons/skill_iron_wall.svg",
-}
-
 ## 옵션 버튼들을 만들어 보여주고, 플레이어가 하나를 누를 때까지 기다린다
 func _choose_action(options: Array[Dictionary]) -> Dictionary:
 	for child in action_container.get_children():
@@ -212,8 +206,8 @@ func _choose_action(options: Array[Dictionary]) -> Dictionary:
 		var button := Button.new()
 		button.text = option["label"]
 		button.disabled = option["disabled"]
-		if option["kind"] == "skill" and SKILL_ICON_PATHS.has(option["name"]):
-			button.icon = load(SKILL_ICON_PATHS[option["name"]])
+		if option["kind"] == "skill":
+			button.icon = load(option["icon"])
 		button.pressed.connect(_on_action_pressed.bind(option))
 		action_container.add_child(button)
 	var result: Dictionary = await action_chosen

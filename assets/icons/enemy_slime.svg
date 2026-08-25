@@ -1,0 +1,11 @@
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- 몸체 -->
+  <path d="M32 10 C48 10 56 28 56 40 C56 52 46 58 32 58 C18 58 8 52 8 40 C8 28 16 10 32 10 Z" fill="#4ade80"/>
+  <!-- 광택 -->
+  <ellipse cx="22" cy="26" rx="6" ry="8" fill="#ffffff" opacity="0.4"/>
+  <!-- 눈 -->
+  <circle cx="24" cy="38" r="3.5" fill="#1a1a1a"/>
+  <circle cx="40" cy="38" r="3.5" fill="#1a1a1a"/>
+  <!-- 입 -->
+  <path d="M24 48 Q32 53 40 48" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+</svg>

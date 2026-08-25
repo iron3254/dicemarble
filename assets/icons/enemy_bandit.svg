@@ -1,0 +1,11 @@
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- 후드 -->
+  <path d="M32 4 C16 4 10 20 12 34 C13 44 20 54 22 60 L42 60 C44 54 51 44 52 34 C54 20 48 4 32 4 Z" fill="#2b2b33"/>
+  <!-- 얼굴 그림자 -->
+  <ellipse cx="32" cy="30" rx="15" ry="14" fill="#141418"/>
+  <!-- 눈 -->
+  <circle cx="25" cy="28" r="2.6" fill="#e8e8e8"/>
+  <circle cx="39" cy="28" r="2.6" fill="#e8e8e8"/>
+  <!-- 복면 -->
+  <rect x="16" y="34" width="32" height="8" rx="4" fill="#1a1a20"/>
+</svg>
