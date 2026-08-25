@@ -5,6 +5,9 @@
 [ext_resource type="Script" uid="uid://qxo88fw5fnjn" path="res://scripts/stat_choice_view.gd" id="4"]
 [ext_resource type="Script" uid="uid://b65owy0422gfj" path="res://scripts/battle_view.gd" id="5"]
 [ext_resource type="Script" uid="uid://dtafohjtb3qc4" path="res://scripts/dice_3d_view.gd" id="6"]
+[ext_resource type="Script" path="res://scripts/skill_list_popup.gd" id="8"]
+[ext_resource type="Texture2D" path="res://assets/icons/player_character.svg" id="9"]
+[ext_resource type="Texture2D" path="res://assets/icons/enemy_wolf.svg" id="10"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bar_bg"]
 bg_color = Color(0.18, 0.18, 0.2, 1)
@@ -131,6 +134,70 @@ offset_bottom = 324.0
 theme_override_font_sizes/font_size = 22
 text = "스킬카드 0장"
 
+[node name="SkillListButton" type="Button" parent="UI" unique_id=300000007]
+offset_left = 800.0
+offset_top = 330.0
+offset_right = 990.0
+offset_bottom = 368.0
+text = "내 스킬 보기"
+
+[node name="SkillListPopup" type="Control" parent="UI" unique_id=300000008]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("8")
+
+[node name="Dim" type="ColorRect" parent="UI/SkillListPopup"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.6)
+mouse_filter = 1
+
+[node name="Panel" type="ColorRect" parent="UI/SkillListPopup"]
+offset_left = 326.0
+offset_top = 110.0
+offset_right = 826.0
+offset_bottom = 510.0
+color = Color(0.14, 0.14, 0.17, 0.97)
+
+[node name="TitleLabel" type="Label" parent="UI/SkillListPopup/Panel"]
+offset_left = 20.0
+offset_top = 12.0
+offset_right = 420.0
+offset_bottom = 46.0
+theme_override_font_sizes/font_size = 26
+text = "보유 스킬카드"
+
+[node name="CloseButton" type="Button" parent="UI/SkillListPopup/Panel"]
+offset_left = 430.0
+offset_top = 10.0
+offset_right = 490.0
+offset_bottom = 44.0
+text = "닫기"
+
+[node name="EmptyLabel" type="Label" parent="UI/SkillListPopup/Panel"]
+offset_left = 20.0
+offset_top = 60.0
+offset_right = 480.0
+offset_bottom = 100.0
+text = "아직 스킬카드가 없습니다"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="UI/SkillListPopup/Panel"]
+offset_left = 20.0
+offset_top = 60.0
+offset_right = 480.0
+offset_bottom = 380.0
+
+[node name="ListContainer" type="VBoxContainer" parent="UI/SkillListPopup/Panel/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
 [node name="StatChoiceView" type="Control" parent="UI" unique_id=1403617027]
 layout_mode = 3
 anchors_preset = 0
@@ -204,6 +271,15 @@ offset_right = 320.0
 offset_bottom = 316.0
 color = Color(0.4, 0.6, 1, 1)
 
+[node name="CharacterIcon" type="TextureRect" parent="UI/BattleView/Background/PlayerAvatar"]
+offset_left = 55.0
+offset_top = 25.0
+offset_right = 185.0
+offset_bottom = 155.0
+texture = ExtResource("9")
+expand_mode = 1
+stretch_mode = 5
+
 [node name="PlayerHpBar" type="ProgressBar" parent="UI/BattleView/Background" unique_id=200000012]
 layout_mode = 0
 offset_left = 80.0
@@ -250,6 +326,15 @@ offset_top = 136.0
 offset_right = 1072.0
 offset_bottom = 316.0
 color = Color(1, 0.45, 0.4, 1)
+
+[node name="CharacterIcon" type="TextureRect" parent="UI/BattleView/Background/EnemyAvatar"]
+offset_left = 55.0
+offset_top = 25.0
+offset_right = 185.0
+offset_bottom = 155.0
+texture = ExtResource("10")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="EnemyHpBar" type="ProgressBar" parent="UI/BattleView/Background" unique_id=200000015]
 layout_mode = 0

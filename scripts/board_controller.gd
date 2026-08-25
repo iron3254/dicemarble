@@ -33,6 +33,8 @@ var stats: PlayerStats
 @onready var big_mana_label: Label = $UI/BigManaLabel
 @onready var big_skill_label: Label = $UI/BigSkillLabel
 @onready var win_label: Label = $UI/WinLabel
+@onready var skill_list_button: Button = $UI/SkillListButton
+@onready var skill_list_popup: SkillListPopup = $UI/SkillListPopup
 
 func _ready() -> void:
 	board_data = BoardData.new()
@@ -40,6 +42,7 @@ func _ready() -> void:
 	stats = PlayerStats.new()
 	board_view.setup(board_data)
 	roll_button.pressed.connect(take_turn)
+	skill_list_button.pressed.connect(func(): skill_list_popup.open(stats.skill_cards))
 	_update_status()
 
 ## 한 턴 진행: 3D 주사위를 굴려 이동 → 지나친 꼭짓점 처리 → 도착 칸 효과 → 승리 체크

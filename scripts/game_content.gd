@@ -26,12 +26,12 @@ const RANDOM_EFFECTS := [
 
 ## cost: 사용에 필요한 마력, power: 주사위+스탯 판정에 더해지는 위력(공격은 데미지, 방어는 경감량)
 const SKILL_CARDS := [
-	{"name": "강타", "category": SkillCategory.ATTACK, "cost": 2, "power": 2},
-	{"name": "연속 베기", "category": SkillCategory.ATTACK, "cost": 1, "power": 1},
-	{"name": "필살기", "category": SkillCategory.ATTACK, "cost": 3, "power": 3},
-	{"name": "방패 올리기", "category": SkillCategory.DEFENSE, "cost": 2, "power": 2},
-	{"name": "회피", "category": SkillCategory.DEFENSE, "cost": 1, "power": 1},
-	{"name": "철벽", "category": SkillCategory.DEFENSE, "cost": 3, "power": 3},
+	{"name": "강타", "category": SkillCategory.ATTACK, "cost": 2, "power": 2, "icon": "res://assets/icons/skill_heavy_strike.svg"},
+	{"name": "연속 베기", "category": SkillCategory.ATTACK, "cost": 1, "power": 1, "icon": "res://assets/icons/skill_multi_slash.svg"},
+	{"name": "필살기", "category": SkillCategory.ATTACK, "cost": 3, "power": 3, "icon": "res://assets/icons/skill_finishing_blow.svg"},
+	{"name": "방패 올리기", "category": SkillCategory.DEFENSE, "cost": 2, "power": 2, "icon": "res://assets/icons/skill_shield.svg"},
+	{"name": "회피", "category": SkillCategory.DEFENSE, "cost": 1, "power": 1, "icon": "res://assets/icons/skill_dodge.svg"},
+	{"name": "철벽", "category": SkillCategory.DEFENSE, "cost": 3, "power": 3, "icon": "res://assets/icons/skill_iron_wall.svg"},
 ]
 
 static func draw_event_card() -> Dictionary:
